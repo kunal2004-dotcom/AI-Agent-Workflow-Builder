@@ -61,8 +61,8 @@ const SortableStep = ({ step, index, updateStep, removeStep, userRole }: any) =>
 export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: Props) {
   const [name, setName] = useState(workflow?.name || '');
   const [description, setDescription] = useState(workflow?.description || '');
-  const [steps, setSteps] = useState<Step[]>(workflow?.steps || []);
-  const [triggers, setTriggers] = useState<Trigger[]>(workflow?.triggers || []);
+  const [steps, setSteps] = useState<Step[]>(workflow?.workflow_steps || []);
+  const [triggers, setTriggers] = useState<Trigger[]>(workflow?.workflow_triggers || []);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string|null>(null);
 
