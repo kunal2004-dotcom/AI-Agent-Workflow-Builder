@@ -1,0 +1,5 @@
+[global]
+name = "ai-agent"
+
+[hasura.settings]
+corsDomain = ["*"]
