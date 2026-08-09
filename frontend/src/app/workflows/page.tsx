@@ -3,7 +3,7 @@ import { useAuthenticationStatus } from '@nhost/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_ORG_WORKFLOWS, TRIGGER_WORKFLOW_RUN, GET_MY_ORGS } from '@/lib/graphql';
+import { GET_ORG_WORKFLOWS, TRIGGER_WORKFLOW_RUN, GET_MY_ORGS, DELETE_WORKFLOW } from '@/lib/graphql';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import Link from 'next/link';
@@ -29,6 +29,7 @@ export default function WorkflowsPage() {
   });
 
   const [triggerRun, { loading: runningId }] = useMutation(TRIGGER_WORKFLOW_RUN);
+  const [deleteWorkflow, { loading: deletingId }] = useMutation(DELETE_WORKFLOW);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push('/auth/login');
@@ -49,6 +50,17 @@ export default function WorkflowsPage() {
       router.push(`/workflows/${id}/run/${runId}?org_id=${currentOrgId}`);
     } catch (err: any) {
       alert(err.message);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (confirm(`Are you sure you want to delete "${name}"? This cannot be undone and will delete all associated runs.`)) {
+      try {
+        await deleteWorkflow({ variables: { id } });
+        refetch();
+      } catch (err: any) {
+        alert(err.message);
+      }
     }
   };
 
@@ -102,7 +114,10 @@ export default function WorkflowsPage() {
                     <div className="flex gap-2">
                       <Link href={`/workflows/${wf.id}?org_id=${currentOrgId}`} className="btn btn-ghost btn-sm">Edit</Link>
                       {currentOrg.role !== 'viewer' && (
-                        <button className="btn btn-primary btn-sm" onClick={() => handleRun(wf.id)} disabled={runningId}>Run</button>
+                        <>
+                          <button className="btn btn-danger btn-sm bg-red-600 hover:bg-red-700 text-white" onClick={() => handleDelete(wf.id, wf.name)} disabled={deletingId}>Delete</button>
+                          <button className="btn btn-primary btn-sm" onClick={() => handleRun(wf.id)} disabled={runningId}>Run</button>
+                        </>
                       )}
                     </div>
                   </div>

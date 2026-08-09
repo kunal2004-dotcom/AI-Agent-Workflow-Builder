@@ -328,3 +328,11 @@ export const SUBSCRIBE_WORKFLOW_RUN = gql`
     }
   }
 `;
+
+export const DELETE_WORKFLOW = gql`
+  mutation DeleteWorkflow($id: uuid!) {
+    delete_workflows_by_pk(id: $id) {
+      id
+    }
+  }
+`;
