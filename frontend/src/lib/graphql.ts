@@ -164,9 +164,8 @@ export const CREATE_ORGANIZATION = gql`
   }
 `;
 
-export const UPSERT_WORKFLOW = gql`
-  mutation UpsertWorkflow(
-    $id: uuid
+export const CREATE_WORKFLOW = gql`
+  mutation CreateWorkflow(
     $org_id: uuid!
     $name: String!
     $description: String
@@ -174,15 +173,31 @@ export const UPSERT_WORKFLOW = gql`
   ) {
     insert_workflows_one(
       object: {
-        id: $id
         org_id: $org_id
         name: $name
         description: $description
         is_active: $is_active
       }
-      on_conflict: {
-        constraint: workflows_pkey
-        update_columns: [name, description, is_active, updated_at]
+    ) {
+      id
+      name
+    }
+  }
+`;
+
+export const UPDATE_WORKFLOW = gql`
+  mutation UpdateWorkflow(
+    $id: uuid!
+    $name: String!
+    $description: String
+    $is_active: Boolean!
+  ) {
+    update_workflows_by_pk(
+      pk_columns: { id: $id }
+      _set: {
+        name: $name
+        description: $description
+        is_active: $is_active
       }
     ) {
       id

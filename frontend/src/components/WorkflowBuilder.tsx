@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { UPSERT_WORKFLOW, DELETE_WORKFLOW_STEPS, INSERT_WORKFLOW_STEPS, DELETE_WORKFLOW_TRIGGERS, INSERT_WORKFLOW_TRIGGERS } from '@/lib/graphql';
+import { CREATE_WORKFLOW, UPDATE_WORKFLOW, DELETE_WORKFLOW_STEPS, INSERT_WORKFLOW_STEPS, DELETE_WORKFLOW_TRIGGERS, INSERT_WORKFLOW_TRIGGERS } from '@/lib/graphql';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -66,7 +66,8 @@ export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string|null>(null);
 
-  const [upsertWorkflow] = useMutation(UPSERT_WORKFLOW);
+  const [createWorkflow] = useMutation(CREATE_WORKFLOW);
+  const [updateWorkflow] = useMutation(UPDATE_WORKFLOW);
   const [deleteSteps] = useMutation(DELETE_WORKFLOW_STEPS);
   const [insertSteps] = useMutation(INSERT_WORKFLOW_STEPS);
   const [deleteTriggers] = useMutation(DELETE_WORKFLOW_TRIGGERS);
@@ -115,17 +116,28 @@ export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: 
     setSaving(true);
     setError(null);
     try {
-      const workflowId = workflow?.id || crypto.randomUUID();
-      const res = await upsertWorkflow({
-        variables: {
-          id: workflowId,
-          org_id: orgId,
-          name,
-          description,
-          is_active: true
-        }
-      });
-      const wfId = workflowId;
+      let wfId = workflow?.id;
+      
+      if (wfId) {
+        await updateWorkflow({
+          variables: {
+            id: wfId,
+            name,
+            description,
+            is_active: true
+          }
+        });
+      } else {
+        const res = await createWorkflow({
+          variables: {
+            org_id: orgId,
+            name,
+            description,
+            is_active: true
+          }
+        });
+        wfId = res.data.insert_workflows_one.id;
+      }
 
       if (workflow?.id) {
         await deleteSteps({ variables: { workflow_id: wfId } });
