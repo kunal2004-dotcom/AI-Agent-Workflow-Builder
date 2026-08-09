@@ -1,27 +1,6 @@
 [global]
 name = "ai-agent-workflow-builder"
 
-[[global.environment]]
-name = "GROQ_API_KEY"
-value = "{{ secrets.GROQ_API_KEY }}"
-
-[[global.environment]]
-name = "NHOST_GRAPHQL_URL"
-value = "http://graphql:8080/v1/graphql"
-
-[[global.environment]]
-name = "NHOST_FUNCTIONS_URL"
-value = "http://functions:3000"
-
-[hasura]
-version = "v2.33.4-ce"
-adminSecret = "{{ secrets.NHOST_ADMIN_SECRET }}"
-webhookSecret = "{{ secrets.NHOST_WEBHOOK_SECRET }}"
-
-[[hasura.jwtSecrets]]
-type = "HS256"
-key = "{{ secrets.NHOST_JWT_SECRET }}"
-
 [hasura.settings]
 corsDomain = ["*"]
 devMode = true
@@ -45,9 +24,3 @@ allowedUrls = ["http://localhost:3000", "https://*.vercel.app"]
 
 [functions]
 node.version = "18"
-
-[storage]
-version = "0.3.5"
-
-[postgres]
-version = "14.6-20231018-1"
