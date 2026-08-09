@@ -528,3 +528,7 @@
                       _eq: X-Hasura-User-Id
                   - role:
                       _eq: owner
+
+- table:
+    schema: auth
+    name: users
