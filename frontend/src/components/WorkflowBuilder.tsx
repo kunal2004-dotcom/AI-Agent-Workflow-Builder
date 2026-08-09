@@ -120,7 +120,8 @@ export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: 
           id: workflow?.id,
           org_id: orgId,
           name,
-          description
+          description,
+          is_active: true
         }
       });
       const wfId = res.data.insert_workflows_one?.id || res.data.update_workflows_by_pk?.id;
@@ -133,7 +134,7 @@ export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: 
       if (steps.length > 0) {
         await insertSteps({
           variables: {
-            objects: steps.map((s, i) => ({
+            steps: steps.map((s, i) => ({
               workflow_id: wfId,
               type: s.type,
               config: s.config,
@@ -146,7 +147,7 @@ export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: 
       if (triggers.length > 0) {
         await insertTriggers({
           variables: {
-            objects: triggers.map((t) => ({
+            triggers: triggers.map((t) => ({
               workflow_id: wfId,
               type: t.type,
               config: t.config
