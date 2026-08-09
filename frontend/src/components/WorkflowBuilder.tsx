@@ -115,16 +115,17 @@ export default function WorkflowBuilder({ workflow, orgId, userRole, onSaved }: 
     setSaving(true);
     setError(null);
     try {
+      const workflowId = workflow?.id || crypto.randomUUID();
       const res = await upsertWorkflow({
         variables: {
-          id: workflow?.id,
+          id: workflowId,
           org_id: orgId,
           name,
           description,
           is_active: true
         }
       });
-      const wfId = res.data.insert_workflows_one?.id || res.data.update_workflows_by_pk?.id;
+      const wfId = workflowId;
 
       if (workflow?.id) {
         await deleteSteps({ variables: { workflow_id: wfId } });
