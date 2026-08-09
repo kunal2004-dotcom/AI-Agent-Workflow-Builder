@@ -22,9 +22,9 @@ export default function StepConfigEditor({ type, config, onChange, userRole }: P
       <div className="flex flex-col gap-3">
         <select className="select w-full" value={config.model || ''} onChange={e => handleChange('model', e.target.value)} disabled={disabled}>
           <option value="">Select Model</option>
-          <option value="gpt-4o">GPT-4o</option>
-          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-          <option value="claude-3-opus">Claude 3 Opus</option>
+          <option value="llama3-8b-8192">Llama 3 8B (Groq)</option>
+          <option value="llama3-70b-8192">Llama 3 70B (Groq)</option>
+          <option value="mixtral-8x7b-32768">Mixtral 8x7B (Groq)</option>
         </select>
         <textarea className="textarea w-full" placeholder="System Prompt" value={config.system_prompt || ''} onChange={e => handleChange('system_prompt', e.target.value)} disabled={disabled} rows={3}></textarea>
         <textarea className="textarea w-full" placeholder="User Prompt" value={config.user_prompt || ''} onChange={e => handleChange('user_prompt', e.target.value)} disabled={disabled} rows={3}></textarea>
