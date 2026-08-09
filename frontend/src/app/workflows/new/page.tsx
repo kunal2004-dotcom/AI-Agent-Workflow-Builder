@@ -22,14 +22,14 @@ export default function NewWorkflowPage() {
   }, [isAuthenticated, authLoading, router]);
 
   useEffect(() => {
-    if (orgData?.organization_members?.length > 0 && !currentOrgId) {
-      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.organization_members[0].organization.id);
+    if (orgData?.org_members?.length > 0 && !currentOrgId) {
+      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.org_members[0].organization.id);
     }
   }, [orgData, currentOrgId]);
 
   if (authLoading || !orgData) return <div className="h-screen flex items-center justify-center"><span className="spinner w-12 h-12"></span></div>;
 
-  const orgs = orgData?.organization_members || [];
+  const orgs = orgData?.org_members || [];
   const currentOrg = orgs.find((o: any) => o.organization.id === currentOrgId);
 
   if (!currentOrg) return null;

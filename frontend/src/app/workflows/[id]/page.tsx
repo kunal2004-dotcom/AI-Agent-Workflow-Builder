@@ -29,14 +29,14 @@ export default function EditWorkflowPage({ params }: { params: { id: string } })
   }, [isAuthenticated, authLoading, router]);
 
   useEffect(() => {
-    if (orgData?.organization_members?.length > 0 && !currentOrgId) {
-      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.organization_members[0].organization.id);
+    if (orgData?.org_members?.length > 0 && !currentOrgId) {
+      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.org_members[0].organization.id);
     }
   }, [orgData, currentOrgId]);
 
   if (authLoading || wfLoading || !orgData) return <div className="h-screen flex items-center justify-center"><span className="spinner w-12 h-12"></span></div>;
 
-  const orgs = orgData?.organization_members || [];
+  const orgs = orgData?.org_members || [];
   const currentOrg = orgs.find((o: any) => o.organization.id === currentOrgId);
   const workflow = wfData?.workflows_by_pk;
 
