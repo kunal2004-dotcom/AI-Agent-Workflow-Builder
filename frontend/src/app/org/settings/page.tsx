@@ -20,8 +20,8 @@ export default function OrgSettingsPage() {
   const { data: orgData } = useQuery(GET_MY_ORGS, { skip: !isAuthenticated });
   
   useEffect(() => {
-    if (orgData?.organization_members?.length > 0 && !currentOrgId) {
-      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.organization_members[0].organization.id);
+    if (orgData?.org_members?.length > 0 && !currentOrgId) {
+      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.org_members[0].organization.id);
     }
   }, [orgData, currentOrgId]);
 
@@ -40,7 +40,7 @@ export default function OrgSettingsPage() {
 
   if (authLoading || !orgData) return <div className="h-screen flex items-center justify-center"><span className="spinner w-12 h-12"></span></div>;
 
-  const orgs = orgData?.organization_members || [];
+  const orgs = orgData?.org_members || [];
   const currentOrg = orgs.find((o: any) => o.organization.id === currentOrgId);
 
   if (!currentOrg) return null;
@@ -50,7 +50,7 @@ export default function OrgSettingsPage() {
     return null;
   }
 
-  const members = membersData?.organization_members || [];
+  const members = membersData?.org_members || [];
 
   const handleUpdateRole = async (userId: string, role: string) => {
     try {
