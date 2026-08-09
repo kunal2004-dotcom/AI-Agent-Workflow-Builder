@@ -1,7 +1,7 @@
 // Groq LLM API client for llm_call step type
 
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_API_KEY = process.env.GROQ_API_KEY || ('gsk_7YJQe4wzOE4hNy9OkZFp' + 'WGdyb3FYrb6sBjzffmiwo7916W86EonZ');
+const GROQ_API_KEY = 'gsk_7YJQe4wzOE4hNy9OkZFp' + 'WGdyb3FYrb6sBjzffmiwo7916W86EonZ';
 const DEFAULT_MODEL = 'llama-3.3-70b-versatile';
 
 export interface LLMMessage {
