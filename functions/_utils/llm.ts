@@ -46,11 +46,19 @@ export async function callGroqLLM(
   const messages: LLMMessage[] = [];
 
   if (config.system_prompt) {
-    messages.push({ role: 'system', content: interpolate(config.system_prompt) });
+    let sysPrompt = interpolate(config.system_prompt);
+    if (config.json_mode && !sysPrompt.toLowerCase().includes('json')) {
+      sysPrompt += ' Please output in JSON format.';
+    }
+    messages.push({ role: 'system', content: sysPrompt });
   } else {
+    let sysPrompt = 'You are an AI agent executing a workflow step. Be concise and precise.';
+    if (config.json_mode) {
+      sysPrompt += ' Please output in JSON format.';
+    }
     messages.push({
       role: 'system',
-      content: 'You are an AI agent executing a workflow step. Be concise and precise.',
+      content: sysPrompt,
     });
   }
 
