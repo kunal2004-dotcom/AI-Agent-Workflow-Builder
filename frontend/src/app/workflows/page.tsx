@@ -18,8 +18,8 @@ export default function WorkflowsPage() {
   const { data: orgData } = useQuery(GET_MY_ORGS, { skip: !isAuthenticated });
   
   useEffect(() => {
-    if (orgData?.organization_members?.length > 0 && !currentOrgId) {
-      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.organization_members[0].organization.id);
+    if (orgData?.org_members?.length > 0 && !currentOrgId) {
+      setCurrentOrgId(localStorage.getItem('flowmind_org_id') || orgData.org_members[0].organization.id);
     }
   }, [orgData, currentOrgId]);
 
@@ -36,7 +36,7 @@ export default function WorkflowsPage() {
 
   if (authLoading || loading) return <div className="h-screen flex items-center justify-center"><span className="spinner w-12 h-12"></span></div>;
 
-  const orgs = orgData?.organization_members || [];
+  const orgs = orgData?.org_members || [];
   const currentOrg = orgs.find((o: any) => o.organization.id === currentOrgId);
   if (!currentOrg) return null;
 
@@ -88,8 +88,8 @@ export default function WorkflowsPage() {
                     <p className="text-gray-500 text-sm line-clamp-2 mb-4 h-10">{wf.description}</p>
                     
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <span className="badge bg-gray-100 text-gray-700">{wf.steps_aggregate.aggregate.count} steps</span>
-                      {wf.triggers.map((t: any) => (
+                      <span className="badge bg-gray-100 text-gray-700">{wf.workflow_steps?.length || 0} steps</span>
+                      {wf.workflow_triggers?.map((t: any) => (
                         <span key={t.id} className="badge badge-info">{t.type}</span>
                       ))}
                     </div>
@@ -97,7 +97,7 @@ export default function WorkflowsPage() {
                   
                   <div className="flex items-center justify-between mt-4 pt-4 border-t">
                     <div className="text-xs text-gray-500">
-                      {wf.runs[0] ? `Last run: ${wf.runs[0].status}` : 'Never run'}
+                      {wf.workflow_runs?.[0] ? `Last run: ${wf.workflow_runs[0].status}` : 'Never run'}
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/workflows/${wf.id}?org_id=${currentOrgId}`} className="btn btn-ghost btn-sm">Edit</Link>
