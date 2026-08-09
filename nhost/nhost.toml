@@ -1,26 +1,2 @@
 [global]
 name = "ai-agent-workflow-builder"
-
-[hasura.settings]
-corsDomain = ["*"]
-devMode = true
-enableConsole = true
-enableAllowList = false
-enableRemoteSchemaPermissions = false
-
-[auth]
-version = "0.21.1"
-
-[auth.method.emailPassword]
-enabled = true
-hibpEnabled = false
-emailVerificationRequired = false
-
-[auth.method.anonymous]
-enabled = false
-
-[auth.redirection]
-allowedUrls = ["http://localhost:3000", "https://*.vercel.app"]
-
-[functions]
-node.version = "18"
