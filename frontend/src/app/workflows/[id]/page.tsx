@@ -88,7 +88,7 @@ export default function EditWorkflowPage({ params }: { params: { id: string } })
                   </tr>
                 </thead>
                 <tbody className="divide-y text-sm">
-                  {workflow.runs.map((run: any) => (
+                  {workflow.workflow_runs.map((run: any) => (
                     <tr key={run.id} className="hover:bg-gray-50">
                       <td className="p-4">
                         <span className={`badge badge-${run.status}`}>{run.status}</span>
@@ -103,7 +103,7 @@ export default function EditWorkflowPage({ params }: { params: { id: string } })
                       </td>
                     </tr>
                   ))}
-                  {workflow.runs.length === 0 && (
+                  {workflow.workflow_runs.length === 0 && (
                     <tr>
                       <td colSpan={5} className="p-8 text-center text-gray-500">No runs found</td>
                     </tr>
