@@ -44,8 +44,8 @@ export default function WorkflowsPage() {
 
   const handleRun = async (id: string) => {
     try {
-      const res = await triggerRun({ variables: { workflow_id: id, trigger_type: 'manual', payload: {} } });
-      const runId = res.data.insert_workflow_runs_one.id;
+      const res = await triggerRun({ variables: { workflow_id: id, input_data: {} } });
+      const runId = res.data.triggerWorkflowRun.run_id;
       router.push(`/workflows/${id}/run/${runId}?org_id=${currentOrgId}`);
     } catch (err: any) {
       alert(err.message);
