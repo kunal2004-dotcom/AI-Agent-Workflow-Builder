@@ -1,0 +1,75 @@
+table:
+  name: organizations
+  schema: public
+configuration:
+  column_config: {}
+  custom_column_names: {}
+  custom_root_fields: {}
+array_relationships:
+  - name: org_members
+    using:
+      foreign_key_constraint_on:
+        column: org_id
+        table:
+          name: org_members
+          schema: public
+  - name: workflows
+    using:
+      foreign_key_constraint_on:
+        column: org_id
+        table:
+          name: workflows
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - name
+        - quota_limit
+        - quota_used
+        - quota_reset_at
+        - created_at
+        - updated_at
+      # User can only see orgs they belong to
+      filter:
+        org_members:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: false
+insert_permissions:
+  - role: user
+    permission:
+      # Any authenticated user can create an org (becomes owner via create-organization action)
+      check: {}
+      columns:
+        - name
+        - quota_limit
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - name
+        - quota_limit
+        - quota_used
+        - quota_reset_at
+        - updated_at
+      # Only org owners can update org settings
+      filter:
+        org_members:
+          _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - role:
+                _eq: owner
+delete_permissions:
+  - role: user
+    permission:
+      # Only org owners can delete the org
+      filter:
+        org_members:
+          _and:
+            - user_id:
+                _eq: X-Hasura-User-Id
+            - role:
+                _eq: owner

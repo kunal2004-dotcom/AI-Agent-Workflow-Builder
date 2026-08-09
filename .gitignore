@@ -1,0 +1,22 @@
+# Secrets — never commit
+.secrets
+.env
+.env.local
+.env*.local
+
+# Node
+node_modules/
+dist/
+
+# nhost local data
+.nhost/
+
+# Frontend
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+*.log

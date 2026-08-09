@@ -1,0 +1,47 @@
+table:
+  name: workflow_runs
+  schema: public
+configuration:
+  column_config: {}
+  custom_column_names: {}
+  custom_root_fields: {}
+object_relationships:
+  - name: workflow
+    using:
+      foreign_key_constraint_on: workflow_id
+  - name: triggered_by_user
+    using:
+      foreign_key_constraint_on: triggered_by
+array_relationships:
+  - name: step_runs
+    using:
+      foreign_key_constraint_on:
+        column: workflow_run_id
+        table:
+          name: step_runs
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - workflow_id
+        - status
+        - trigger_type
+        - triggered_by
+        - started_at
+        - completed_at
+        - current_step_index
+        - context
+        - error_message
+        - created_at
+      # Any member of the org can view run history
+      filter:
+        workflow:
+          organization:
+            org_members:
+              user_id:
+                _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  # workflow_runs are created and updated ONLY via the Action handler (admin secret)
+  # No insert/update/delete permissions for the "user" role — all managed server-side

@@ -1,0 +1,60 @@
+type Mutation {
+  """
+  Trigger a workflow run. Verifies caller is owner/editor in the workflow's org,
+  checks org quota, then executes steps sequentially with retry logic.
+  Pauses on approval_gate steps.
+  """
+  triggerWorkflowRun(input: TriggerWorkflowInput!): WorkflowRunResult!
+
+  """
+  Approve a paused approval_gate step. The handler checks the approver's role
+  (must be owner/editor in the workflow's org) before resuming execution.
+  This is a code-level check that cannot be replicated by database permissions alone.
+  """
+  approveStep(input: ApproveStepInput!): ApproveStepResult!
+
+  """
+  Atomically create an organization and insert the caller as owner.
+  """
+  createOrganization(input: CreateOrganizationInput!): CreateOrganizationResult!
+
+  """
+  Webhook endpoint for external systems to trigger workflow runs.
+  """
+  webhookTriggerWorkflow(input: WebhookTriggerInput!): WorkflowRunResult!
+}
+
+input TriggerWorkflowInput {
+  workflow_id: uuid!
+  input_data: jsonb
+}
+
+input ApproveStepInput {
+  step_run_id: uuid!
+}
+
+input CreateOrganizationInput {
+  name: String!
+}
+
+input WebhookTriggerInput {
+  workflow_id: uuid!
+  data: jsonb
+}
+
+type WorkflowRunResult {
+  run_id: uuid!
+  status: String!
+  message: String
+}
+
+type ApproveStepResult {
+  success: Boolean!
+  message: String!
+  run_status: String
+}
+
+type CreateOrganizationResult {
+  org_id: uuid!
+  name: String!
+}

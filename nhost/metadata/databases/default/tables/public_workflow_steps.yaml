@@ -1,0 +1,109 @@
+table:
+  name: workflow_steps
+  schema: public
+configuration:
+  column_config: {}
+  custom_column_names: {}
+  custom_root_fields: {}
+object_relationships:
+  - name: workflow
+    using:
+      foreign_key_constraint_on: workflow_id
+array_relationships:
+  - name: step_runs
+    using:
+      foreign_key_constraint_on:
+        column: step_id
+        table:
+          name: step_runs
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - workflow_id
+        - type
+        - config
+        - order_index
+        - created_at
+        - updated_at
+      # Any member can see steps of workflows in their org
+      filter:
+        workflow:
+          organization:
+            org_members:
+              user_id:
+                _eq: X-Hasura-User-Id
+      allow_aggregations: false
+insert_permissions:
+  - role: user
+    permission:
+      # LAYER 2: owners can add any step type; editors cannot add db_write/notify/approval_gate
+      # Restriction on sensitive types is enforced in the check constraint:
+      check:
+        _and:
+          - workflow:
+              organization:
+                org_members:
+                  _and:
+                    - user_id:
+                        _eq: X-Hasura-User-Id
+                    - role:
+                        _in:
+                          - owner
+                          - editor
+          # If step type is sensitive, caller must be owner
+          - _or:
+              - type:
+                  _nin:
+                    - db_write
+                    - notify
+              - workflow:
+                  organization:
+                    org_members:
+                      _and:
+                        - user_id:
+                            _eq: X-Hasura-User-Id
+                        - role:
+                            _eq: owner
+      columns:
+        - workflow_id
+        - type
+        - config
+        - order_index
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - type
+        - config
+        - order_index
+        - updated_at
+      # Only owners and editors can edit steps
+      filter:
+        workflow:
+          organization:
+            org_members:
+              _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    _in:
+                      - owner
+                      - editor
+delete_permissions:
+  - role: user
+    permission:
+      # Owners and editors can delete steps
+      filter:
+        workflow:
+          organization:
+            org_members:
+              _and:
+                - user_id:
+                    _eq: X-Hasura-User-Id
+                - role:
+                    _in:
+                      - owner
+                      - editor

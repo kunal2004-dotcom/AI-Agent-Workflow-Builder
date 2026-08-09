@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": "./functions",
+    "baseUrl": ".",
+    "paths": {
+      "@utils/*": ["functions/_utils/*"]
+    }
+  },
+  "include": ["functions/**/*"],
+  "exclude": ["node_modules", "frontend"]
+}
