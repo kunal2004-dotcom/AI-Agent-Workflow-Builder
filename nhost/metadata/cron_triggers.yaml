@@ -1,15 +1,14 @@
-cron_triggers:
-  - name: scheduled_workflow_runner
-    webhook: "{{NHOST_FUNCTIONS_URL}}/cron-trigger"
-    schedule: "*/5 * * * *"
-    include_in_metadata: true
-    payload: {}
-    retry_conf:
-      num_retries: 3
-      timeout_seconds: 120
-      tolerance_seconds: 21600
-      retry_interval_seconds: 10
-    headers:
-      - name: x-webhook-secret
-        value_from_env: NHOST_WEBHOOK_SECRET
-    comment: "Every 5 minutes — finds all active workflows with 'scheduled' triggers and starts a run"
+- name: scheduled_workflow_runner
+  webhook: "{{NHOST_FUNCTIONS_URL}}/cron-trigger"
+  schedule: "*/5 * * * *"
+  include_in_metadata: true
+  payload: {}
+  retry_conf:
+    num_retries: 3
+    timeout_seconds: 120
+    tolerance_seconds: 21600
+    retry_interval_seconds: 10
+  headers:
+    - name: x-webhook-secret
+      value_from_env: NHOST_WEBHOOK_SECRET
+  comment: "Every 5 minutes — finds all active workflows with 'scheduled' triggers and starts a run"
