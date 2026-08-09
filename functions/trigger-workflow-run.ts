@@ -29,7 +29,8 @@ export default async function handler(req: Request, res: Response) {
   try {
     const payload = req.body as HasuraActionPayload<TriggerInput>;
     const userId = payload.session_variables?.['x-hasura-user-id'];
-    const { workflow_id, input_data = {} } = payload.input;
+    const inputObj = (payload.input as any).input || payload.input;
+    const { workflow_id, input_data = {} } = inputObj;
 
     // ── Auth: must have a session ──────────────────────────────
     if (!userId) {

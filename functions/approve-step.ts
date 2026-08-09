@@ -35,7 +35,8 @@ export default async function handler(req: Request, res: Response) {
   try {
     const payload = req.body as HasuraActionPayload<ApproveInput>;
     const approverId = payload.session_variables?.['x-hasura-user-id'];
-    const { step_run_id } = payload.input;
+    const inputObj = (payload.input as any).input || payload.input;
+    const { step_run_id } = inputObj;
 
     if (!approverId) {
       return res.status(401).json({ success: false, message: 'Unauthorized: no session', run_status: null });
