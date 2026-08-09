@@ -2,8 +2,8 @@
 import { useAuthenticationStatus } from '@nhost/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_MY_ORGS, GET_ORG_WORKFLOWS } from '@/lib/graphql';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_MY_ORGS, GET_ORG_WORKFLOWS, CREATE_ORGANIZATION } from '@/lib/graphql';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import QuotaIndicator from '@/components/QuotaIndicator';
@@ -65,13 +65,7 @@ export default function DashboardPage() {
   const userRole = currentMember?.role || 'viewer';
 
   if (!currentOrg) {
-    return (
-      <div className="empty-state" style={{ minHeight: '100vh' }}>
-        <div className="empty-state-icon">🏢</div>
-        <h3>No organization found</h3>
-        <p>Create an organization to get started.</p>
-      </div>
-    );
+    return <CreateOrgState onCreated={() => window.location.reload()} />;
   }
 
   const workflows = workflowData?.workflows || [];
@@ -215,6 +209,56 @@ export default function DashboardPage() {
           </div>
         </main>
       </div>
+    </div>
+  );
+}
+
+function CreateOrgState({ onCreated }: { onCreated: () => void }) {
+  const [name, setName] = useState('');
+  const [createOrg, { loading, error }] = useMutation(CREATE_ORGANIZATION);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createOrg({ variables: { name } });
+      onCreated();
+    } catch (err: any) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar currentOrgId={null} onOrgChange={() => {}} orgs={[]} userRole="viewer" />
+      <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <div className="card" style={{ maxWidth: 400, width: '100%', textAlign: 'center' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏢</div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Welcome to FlowMind!</h2>
+          <p style={{ color: '#9ca3af', fontSize: '0.875rem', marginBottom: '2rem' }}>
+            To get started building workflows, you need to create your first Organization.
+          </p>
+
+          {error && <div className="alert alert-error" style={{ marginBottom: '1rem', textAlign: 'left' }}>⚠️ {error.message}</div>}
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left' }}>
+            <div className="form-group">
+              <label>Organization Name</label>
+              <input 
+                type="text" 
+                className="input" 
+                placeholder="e.g. My Workspace" 
+                value={name} 
+                onChange={e => setName(e.target.value)} 
+                required 
+                minLength={2}
+              />
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={loading} style={{ justifyContent: 'center' }}>
+              {loading ? <span className="spinner" style={{ width: 16, height: 16 }} /> : 'Create Organization'}
+            </button>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }
